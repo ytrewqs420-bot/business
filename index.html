@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudPrint - Instant Quote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--surface);
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            margin-top: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .upload-section {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f1f5f9;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-section:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-main);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            background: #fff;
+            transition: border-color 0.2s;
+            color: var(--text-main);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .summary-card {
+            background: #0f172a;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .summary-row.highlight {
+            color: white;
+            font-weight: 500;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+            font-size: 1.1rem;
+        }
+
+        .total-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--success);
+            line-height: 1;
+            margin: 0.5rem 0;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--success); /* WhatsApp Green-ish */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.1s, background 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background: #16a34a;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>☁️ Cloud Print</h1>
+        <p class="subtitle">Instant Cost Estimation & Ordering</p>
+    </header>
+    
+    <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">📄</div>
+        <strong>Tap to Upload File</strong>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">PDF, DOCX, PPTX (Optional)</p>
+        <input type="file" id="fileInput" hidden multiple onchange="handleFileSelect(this)">
+        <p id="fileName" style="font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-top: 8px;"></p>
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group full-width">
+            <label>Total Pages in Document</label>
+            <input type="number" id="totalPages" value="10" min="1" oninput="calculatePrice()">
+        </div>
+
+        <div class="form-group">
+            <label>Slides Per Page</label>
+            <select id="slidesPerPage" onchange="calculatePrice()">
+                <option value="1">1 Slide (Normal)</option>
+                <option value="2">2 Slides</option>
+                <option value="4">4 Slides</option>
+                <option value="6">6 Slides</option>
+                <option value="9">9 Slides</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Paper Sides</label>
+            <select id="sides" onchange="calculatePrice()">
+                <option value="single">Single Side</option>
+                <option value="double" selected>Double Side</option>
+            </select>
+        </div>
+
+        <div class="form-group full-width">
+            <label>Print Color</label>
+            <select id="printType" onchange="calculatePrice()">
+                <option value="bw">Black & White (Economy)</option>
+                <option value="color">Full Color (Standard)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-row">
+            <span>Physical Sheets Needed</span>
+            <span id="sheetCount">0</span>
+        </div>
+        <div class="summary-row">
+            <span>Rate per Sheet</span>
+            <span id="rateDisplay">0 Tk</span>
+        </div>
+        <div class="summary-row highlight">
+            <span>Estimated Total</span>
+            <div class="total-price">৳ <span id="finalPrice">0</span></div>
+        </div>
+    </div>
+
+    <a href="#" id="whatsappLink" class="btn-primary" onclick="sendToWhatsapp()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/>
+        </svg>
+        Confirm Order via WhatsApp
+    </a>
+</div>
+
+<script>
+    function handleFileSelect(input) {
+        const fileNameDisplay = document.getElementById('fileName');
+        if (input.files && input.files.length > 0) {
+            fileNameDisplay.textContent = "Selected: " + input.files[0].name;
+        } else {
+            fileNameDisplay.textContent = "";
+        }
+    }
+
+    function calculatePrice() {
+        // --- PRICING CONFIGURATION ---
+        const prices = {
+            bw: { single: 2.0, double: 3.0 }, // Example rates: adjust as needed
+            color: { single: 10.0, double: 15.0 }
+        };
+
+        // --- INPUTS ---
+        let totalDocPages = parseInt(document.getElementById('totalPages').value) || 0;
+        const slidesPerPage = parseInt(document.getElementById('slidesPerPage').value) || 1;
+        const type = document.getElementById('printType').value;
+        const sides = document.getElementById('sides').value;
+
+        // --- CALCULATION LOGIC ---
+        
+        // 1. Calculate how many "Logical Pages" we have after putting slides together
+        // Example: 10 doc pages, 2 slides/page => 5 logical pages to print
+        let logicalPagesToPrint = Math.ceil(totalDocPages / slidesPerPage);
+
+        // 2. Calculate Physical Sheets based on Siding
+        let sheets = 0;
+        let rate = 0;
+
+        if (sides === 'single') {
+            // Single Sided: 1 logical page = 1 sheet
+            sheets = logicalPagesToPrint;
+            rate = prices[type].single;
+        } else {
+            // Double Sided: 2 logical pages = 1 sheet
+            sheets = Math.ceil(logicalPagesToPrint / 2);
+            rate = prices[type].double;
+        }
+
+        const totalCost = sheets * rate;
+
+        // --- UPDATE UI ---
+        document.getElementById('finalPrice').innerText = totalCost.toFixed(2);
+        document.getElementById('sheetCount').innerText = sheets;
+        document.getElementById('rateDisplay').innerText = rate + " Tk";
+
+        return { totalDocPages, slidesPerPage, type, sides, sheets, totalCost };
+    }
+
+    function sendToWhatsapp() {
+        const data = calculatePrice();
+        const phone = "8801339129852"; // User's number
+        
+        // Format the message
+        const text = `
+*New Print Order Request*
+------------------
+📄 *Document:* ${document.getElementById('fileInput').files[0]?.name || "Not uploaded yet"}
+🔢 *Total Doc Pages:* ${data.totalDocPages}
+🖼 *Slides per Page:* ${data.slidesPerPage}
+🎨 *Type:* ${data.type === 'bw' ? 'Black & White' : 'Color'}
+📄 *Sides:* ${data.sides === 'single' ? 'Single' : 'Double'}
+------------------
+📃 *Sheets Required:* ${data.sheets}
+💰 *Estimated Cost:* ${data.totalCost} Tk
+------------------
+Please confirm my order.
+`.trim();
+
+        const encodedText = encodeURIComponent(text);
+        const url = `https://wa.me/${phone}?text=${encodedText}`;
+        
+        // Open WhatsApp
+        window.open(url, '_blank');
+    }
+
+    // Run calculation on load
+    calculatePrice();
+</script>
+
+</body>
+</html>
