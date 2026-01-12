@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print hobe? - Instant Quote</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Load PDF.js safely -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
@@ -31,7 +30,6 @@
             min-height: 100vh;
         }
 
-        /* Phone Container */
         .phone-frame {
             background: #ffffff;
             width: 100%;
@@ -56,7 +54,6 @@
             z-index: 10;
         }
 
-        /* Header */
         .chat-header {
             background: var(--header-bg);
             color: var(--header-text);
@@ -77,7 +74,6 @@
         .header-info p { margin: 0; font-size: 0.75rem; opacity: 0.8; display: flex; align-items: center; gap: 4px; }
         .active-indicator { width: 8px; height: 8px; background: #31a24c; border-radius: 50%; }
 
-        /* Content */
         .chat-content {
             flex: 1;
             background: var(--chat-bg);
@@ -87,7 +83,6 @@
             padding-bottom: 2rem;
         }
 
-        /* Bubbles */
         .bubble {
             max-width: 85%;
             padding: 12px 16px;
@@ -100,25 +95,20 @@
         .bubble.incoming { background: var(--bubble-incoming); color: var(--text-main); align-self: flex-start; border-top-left-radius: 4px; }
         .bubble.outgoing { background: var(--bubble-outgoing); color: white; align-self: flex-end; border-top-right-radius: 4px; }
 
-        /* Animation States */
         .hidden-msg { display: none; opacity: 0; transform: translateY(10px); }
         .fade-in {
             display: block;
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        @keyframes popIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes popIn { to { opacity: 1; transform: translateY(0); } }
 
-        /* Typing Loader */
         .typing-indicator {
             background: var(--bubble-incoming);
             padding: 12px 16px;
             border-radius: 18px; border-top-left-radius: 4px;
             align-self: flex-start;
-            display: none; /* Hidden by default */
-            gap: 4px; width: fit-content;
+            display: none; gap: 4px; width: fit-content;
         }
         .dot {
             width: 6px; height: 6px;
@@ -129,7 +119,6 @@
         .dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* Pricing Table */
         .price-card-embed {
             background: #f7f9fa;
             border-radius: 12px;
@@ -140,7 +129,6 @@
         .price-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #e1e3e6; }
         .price-row:last-child { border: none; }
 
-        /* Controls */
         .bubble-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
         
         .control-panel {
@@ -157,7 +145,6 @@
         }
         select:focus, input:focus { background: white; border-color: #0084ff; }
 
-        /* Upload */
         .upload-btn {
             background: white; border: 2px dashed #0084ff; color: #0084ff;
             padding: 15px; border-radius: 12px; text-align: center;
@@ -165,7 +152,6 @@
         }
         .upload-btn:active { transform: scale(0.98); }
 
-        /* Mockup */
         .mockup-container { align-self: center; padding: 5px; }
         .paper-sheet {
             background: white; width: 80px; height: 113px;
@@ -182,7 +168,6 @@
         .layout-6 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); }
         .layout-8 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); }
 
-        /* Footer */
         .chat-footer {
             background: white; padding: 10px 15px; border-top: 1px solid #eee;
             display: flex; flex-direction: column; gap: 10px;
@@ -190,6 +175,23 @@
         .summary-bar { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-sub); }
         .price-tag { font-size: 1.4rem; font-weight: 800; color: #0084ff; }
         
+        .order-draft {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            resize: vertical;
+            box-sizing: border-box;
+            display: none; /* Hidden by default */
+            background: #f9f9f9;
+            color: #333;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
         .send-btn {
             background: #0084ff; color: white; border: none;
             padding: 12px; border-radius: 20px;
@@ -214,15 +216,9 @@
     </div>
 
     <div class="chat-content" id="chatBox">
-        <!-- 1. User Message (Always Visible) -->
         <div class="bubble outgoing">bhai!!! print hobe!?</div>
-
-        <!-- Typing Loader -->
-        <div class="typing-indicator" id="loader">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        </div>
-
-        <!-- 2. Price Message -->
+        <div class="typing-indicator" id="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        
         <div class="bubble incoming hidden-msg" id="msg-price">
             Hobe mane? Albat hobe! 🔥<br>
             Rate dekhle toh nachte icche korbe! 💃
@@ -234,14 +230,11 @@
             </div>
         </div>
 
-        <!-- 3. Prompt Message -->
         <div class="bubble incoming hidden-msg" id="msg-prompt">
             Ar deri keno? File ta ekhanei upload den, baki magic dekhen! 🎩✨
         </div>
 
-        <!-- 4. Controls -->
         <div class="bubble-group hidden-msg" id="msg-controls">
-            <!-- Upload -->
             <div class="bubble outgoing" style="width: 100%; background: transparent; padding: 0; box-shadow: none;">
                 <div class="upload-btn" onclick="document.getElementById('fileInput').click()">
                     <input type="file" id="fileInput" hidden multiple onchange="handleFileSelect(this)">
@@ -249,46 +242,17 @@
                 </div>
             </div>
 
-            <!-- Settings -->
             <div class="bubble incoming" style="width: 90%;">
                 <div class="control-panel">
-                    <div class="control-group">
-                        <label>Total Pages</label>
-                        <input type="number" id="totalPages" value="10" min="1" oninput="calculatePrice()">
-                    </div>
-                    <div class="control-group">
-                        <label>Slides/Page</label>
-                        <select id="slidesPerPage" onchange="calculatePrice()">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="4" selected>4</option>
-                            <option value="6">6</option>
-                            <option value="8">8</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label>Print Type</label>
-                        <select id="printType" onchange="calculatePrice()">
-                            <option value="bw">B&W</option>
-                            <option value="color">Color</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label>Sides</label>
-                        <select id="sides" onchange="calculatePrice()">
-                            <option value="single">Single</option>
-                            <option value="double" selected>Double</option>
-                        </select>
-                    </div>
+                    <div class="control-group"><label>Total Pages</label><input type="number" id="totalPages" value="10" min="1" oninput="calculatePrice()"></div>
+                    <div class="control-group"><label>Slides/Page</label><select id="slidesPerPage" onchange="calculatePrice()"><option value="1">1</option><option value="2">2</option><option value="4" selected>4</option><option value="6">6</option><option value="8">8</option></select></div>
+                    <div class="control-group"><label>Print Type</label><select id="printType" onchange="calculatePrice()"><option value="bw">B&W</option><option value="color">Color</option></select></div>
+                    <div class="control-group"><label>Sides</label><select id="sides" onchange="calculatePrice()"><option value="single">Single</option><option value="double" selected>Double</option></select></div>
                 </div>
             </div>
 
-            <!-- Mockup -->
-            <div class="mockup-container">
-                <div id="paperMockup" class="paper-sheet layout-4 landscape"></div>
-            </div>
+            <div class="mockup-container"><div id="paperMockup" class="paper-sheet layout-4 landscape"></div></div>
         </div>
-        
     </div>
 
     <div class="chat-footer">
@@ -296,66 +260,45 @@
             <span id="sheetCount">0 Sheets</span>
             <span class="price-tag">৳ <span id="finalPrice">0</span></span>
         </div>
-                <a href="#" class="send-btn" onclick="sendToWhatsapp()">
-                    Order dilam:)
-                </a>    </div>
+        
+        <!-- Editable Text Box -->
+        <textarea id="orderDraft" class="order-draft" placeholder="Order details will appear here..." onclick="this.select()"></textarea>
+
+        <a href="#" class="send-btn" onclick="sendToWhatsapp()">
+            Order dilam:)
+        </a>
+    </div>
 </div>
 
 <script>
-    // --- Safe Animation Logic ---
     function startChat() {
         const loader = document.getElementById('loader');
         const box = document.getElementById('chatBox');
-        
         const scroll = () => box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
         
         const steps = [
             { delay: 600, action: () => { loader.style.display = 'flex'; box.insertBefore(loader, document.getElementById('msg-price')); scroll(); } },
             { delay: 1800, action: () => { loader.style.display = 'none'; document.getElementById('msg-price').classList.add('fade-in'); scroll(); } },
-            
             { delay: 2800, action: () => { loader.style.display = 'flex'; box.insertBefore(loader, document.getElementById('msg-prompt')); scroll(); } },
             { delay: 4000, action: () => { loader.style.display = 'none'; document.getElementById('msg-prompt').classList.add('fade-in'); scroll(); } },
-            
             { delay: 4800, action: () => { document.getElementById('msg-controls').classList.add('fade-in'); scroll(); } }
         ];
 
-        let totalDelay = 0;
-        steps.forEach(step => {
-            totalDelay = step.delay;
-            setTimeout(step.action, totalDelay);
-        });
-
-        // Failsafe: Force show everything after 6 seconds if something blocks
-        setTimeout(() => {
-             document.querySelectorAll('.hidden-msg').forEach(el => el.classList.add('fade-in'));
-             loader.style.display = 'none';
-        }, 6000);
+        steps.forEach(s => setTimeout(s.action, s.delay));
+        setTimeout(() => { document.querySelectorAll('.hidden-msg').forEach(el => el.classList.add('fade-in')); loader.style.display = 'none'; }, 6000);
     }
 
-    // Start everything when page loads
-    window.onload = function() {
-        calculatePrice(); // Init calculation
-        startChat(); // Start animation
-    };
+    window.onload = function() { calculatePrice(); startChat(); };
 
-    // --- Core Logic ---
     async function handleFileSelect(input) {
-        const fileNameDisplay = document.getElementById('fileName');
-        const totalPagesInput = document.getElementById('totalPages');
-        const chatBox = document.getElementById('chatBox');
-        
         if (!input.files || input.files.length === 0) return;
-
         const files = input.files;
-        fileNameDisplay.textContent = files.length === 1 ? files[0].name : `${files.length} files`;
+        document.getElementById('fileName').textContent = files.length === 1 ? files[0].name : `${files.length} files`;
         
         let detectedPages = 0;
-        
-        // Try PDF JS
         if (window['pdfjs-dist/build/pdf']) {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            
             for (const file of files) {
                 if (file.type === "application/pdf") {
                     try {
@@ -366,36 +309,27 @@
                     } catch (e) { detectedPages += 1; }
                 } else { detectedPages += 1; }
             }
-        } else {
-            detectedPages = files.length; // Fallback
-        }
+        } else { detectedPages = files.length; }
 
         if (detectedPages > 0) {
-            totalPagesInput.value = detectedPages;
+            document.getElementById('totalPages').value = detectedPages;
             calculatePrice();
-            
-            // Add "File Received" Bubble
             const bubble = document.createElement('div');
             bubble.className = 'bubble incoming fade-in';
             bubble.style.marginTop = '10px';
             bubble.innerHTML = `File peyechi! <b>${detectedPages} pages</b> count korlam. Calculation updated! ✅`;
-            
-            // Insert before controls
-            const controls = document.getElementById('msg-controls');
-            chatBox.insertBefore(bubble, controls);
-            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+            document.getElementById('chatBox').insertBefore(bubble, document.getElementById('msg-controls'));
+            document.getElementById('chatBox').scrollTo({ top: document.getElementById('chatBox').scrollHeight, behavior: 'smooth' });
         }
     }
 
     function calculatePrice() {
         const prices = { bw: { single: 1.8, double: 2.2 }, color: { single: 2.5, double: 3.0 } };
-        
         let total = parseInt(document.getElementById('totalPages').value) || 0;
         let slides = parseInt(document.getElementById('slidesPerPage').value) || 1;
         let type = document.getElementById('printType').value;
         let sides = document.getElementById('sides').value;
 
-        // Mockup
         const sheet = document.getElementById('paperMockup');
         sheet.className = 'paper-sheet layout-' + slides + (slides == 4 || slides == 6 ? ' landscape' : '');
         sheet.innerHTML = '';
@@ -406,14 +340,12 @@
             sheet.appendChild(div);
         }
 
-        // Calc
         let logical = Math.ceil(total / slides);
         let sheets = (sides === 'single') ? logical : Math.ceil(logical / 2);
         let cost = sheets * prices[type][sides];
 
         document.getElementById('finalPrice').innerText = cost.toFixed(2);
         document.getElementById('sheetCount').innerText = sheets + (sheets===1?" Sheet":" Sheets");
-
         return { total, slides, type, sides, sheets, cost };
     }
 
@@ -421,16 +353,17 @@
         const data = calculatePrice();
         const text = `*New Print Order Request*\n------------------\n📄 *File:* ${document.getElementById('fileInput').files[0]?.name || "Not uploaded"}\n🔢 *Pages:* ${data.total}\n🖼 *Slides:* ${data.slides}\n🎨 *Type:* ${data.type}\n📄 *Sides:* ${data.sides}\n------------------\n📃 *Sheets:* ${data.sheets}\n💰 *Total:* ${data.cost} Tk\n------------------\nConfirm please!`;
         
-        // Copy to clipboard
+        const draftBox = document.getElementById('orderDraft');
+        draftBox.style.display = 'block';
+        draftBox.value = text;
+        
         navigator.clipboard.writeText(text).then(() => {
-            // Visual feedback
             const btn = document.querySelector('.send-btn');
             const originalText = btn.innerText;
             btn.innerText = "Copied! Opening WhatsApp...";
             setTimeout(() => btn.innerText = originalText, 3000);
-        }).catch(err => console.error('Clipboard failed:', err));
+        }).catch(err => console.error(err));
 
-        // Open WhatsApp
         window.open(`https://wa.me/8801339129852?text=${encodeURIComponent(text)}`, '_blank');
     }
 </script>
