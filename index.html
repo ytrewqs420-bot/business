@@ -5,25 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print hobe? - Instant Quote</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Load PDF.js safely -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
-            /* Extracted from Poster */
-            --bg-outer: #d1c4ae; /* Warm Beige/Brown */
-            --header-bg: #1e3a8a; /* Deep Blue */
+            --bg-outer: #d1c4ae;
+            --header-bg: #1e3a8a;
             --header-text: #ffffff;
-            --chat-bg: #e4e6eb; /* Messenger Light Gray */
+            --chat-bg: #e4e6eb;
             --bubble-incoming: #ffffff;
-            --bubble-outgoing: #0084ff; /* Messenger Blue */
+            --bubble-outgoing: #0084ff;
             --text-main: #050505;
             --text-sub: #65676b;
-            --success: #0084ff;
         }
 
         body {
             font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
             background-color: var(--bg-outer);
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZDljMmFlIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNjNWI0OWIiLz4KPC9zdmc+'); /* Subtle texture */
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZDljMmFlIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNjNWI0OWIiLz4KPC9zdmc+');
             margin: 0;
             padding: 20px;
             display: flex;
@@ -43,80 +42,49 @@
             border: 12px solid #1a1a1a;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.4), inset 0 0 0 2px #333;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
         }
 
-        /* Notch */
         .notch {
             position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 25px;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 150px; height: 25px;
             background: #1a1a1a;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
+            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
             z-index: 10;
         }
 
-        /* Chat Header */
+        /* Header */
         .chat-header {
             background: var(--header-bg);
             color: var(--header-text);
             padding: 2.5rem 1rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: flex; align-items: center; gap: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 5;
         }
 
         .avatar {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 40px; height: 40px;
+            background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
             font-size: 20px;
         }
 
-        .header-info h1 {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-        
-        .header-info p {
-            margin: 0;
-            font-size: 0.75rem;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .header-info h1 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+        .header-info p { margin: 0; font-size: 0.75rem; opacity: 0.8; display: flex; align-items: center; gap: 4px; }
+        .active-indicator { width: 8px; height: 8px; background: #31a24c; border-radius: 50%; }
 
-        .active-indicator {
-            width: 8px;
-            height: 8px;
-            background: #31a24c;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        /* Chat Content Area */
+        /* Content */
         .chat-content {
             flex: 1;
             background: var(--chat-bg);
             padding: 1rem;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            display: flex; flex-direction: column; gap: 15px;
+            padding-bottom: 2rem;
         }
 
         /* Bubbles */
@@ -124,176 +92,112 @@
             max-width: 85%;
             padding: 12px 16px;
             border-radius: 18px;
-            font-size: 0.95rem;
-            line-height: 1.4;
+            font-size: 0.95rem; line-height: 1.4;
             position: relative;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .bubble.incoming {
+        .bubble.incoming { background: var(--bubble-incoming); color: var(--text-main); align-self: flex-start; border-top-left-radius: 4px; }
+        .bubble.outgoing { background: var(--bubble-outgoing); color: white; align-self: flex-end; border-top-right-radius: 4px; }
+
+        /* Animation States */
+        .hidden-msg { display: none; opacity: 0; transform: translateY(10px); }
+        .fade-in {
+            display: block;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typing Loader */
+        .typing-indicator {
             background: var(--bubble-incoming);
-            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 18px; border-top-left-radius: 4px;
             align-self: flex-start;
-            border-top-left-radius: 4px;
+            display: none; /* Hidden by default */
+            gap: 4px; width: fit-content;
         }
-
-        .bubble.outgoing {
-            background: var(--bubble-outgoing);
-            color: white;
-            align-self: flex-end;
-            border-top-right-radius: 4px;
+        .dot {
+            width: 6px; height: 6px;
+            background: #b0b3b8; border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out both;
         }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* Price Card in Chat */
+        /* Pricing Table */
         .price-card-embed {
-            background: white;
+            background: #f7f9fa;
             border-radius: 12px;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #eee;
-            font-size: 0.85rem;
+            padding: 10px; margin-top: 8px;
+            border: 1px solid #eee; font-size: 0.85rem;
+            color: #333;
         }
-        
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
+        .price-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #e1e3e6; }
         .price-row:last-child { border: none; }
 
-        /* Form Controls stylized as "Inputs" */
+        /* Controls */
+        .bubble-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        
         .control-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            background: white; border-radius: 16px; padding: 14px;
+            display: flex; flex-direction: column; gap: 12px;
         }
-
-        .control-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-sub);
-        }
+        .control-group { display: flex; justify-content: space-between; align-items: center; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-sub); }
 
         select, input[type="number"] {
-            padding: 6px 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: #f0f2f5;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            width: 120px;
+            padding: 8px 12px; border: 1px solid transparent; border-radius: 20px;
+            background: #f0f2f5; font-size: 0.9rem; color: var(--text-main);
+            width: 130px; text-align: center; outline: none;
         }
+        select:focus, input:focus { background: white; border-color: #0084ff; }
 
-        /* Upload Area */
+        /* Upload */
         .upload-btn {
-            background: white;
-            border: 2px dashed #0084ff;
-            color: #0084ff;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
+            background: white; border: 2px dashed #0084ff; color: #0084ff;
+            padding: 15px; border-radius: 12px; text-align: center;
+            cursor: pointer; font-weight: 600; transition: transform 0.1s;
         }
-        
-        .upload-btn:hover {
-            background: #e7f3ff;
-        }
+        .upload-btn:active { transform: scale(0.98); }
 
-        /* Mockup in Chat */
-        .mockup-container {
-            align-self: center;
-            background: transparent;
-            padding: 10px;
-        }
-
+        /* Mockup */
+        .mockup-container { align-self: center; padding: 5px; }
         .paper-sheet {
-            background: white;
-            width: 80px; /* Smaller for chat */
-            height: 113px;
+            background: white; width: 80px; height: 113px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            display: grid;
-            padding: 3px;
-            box-sizing: border-box;
-            gap: 1px;
-            transition: all 0.3s;
+            display: grid; padding: 3px; box-sizing: border-box; gap: 1px;
+            border: 1px solid #ddd; transition: all 0.3s;
         }
-        
         .paper-sheet.landscape { width: 113px; height: 80px; }
-
-        .mock-slide {
-            background: #f0f2f5;
-            border: 1px solid #ccc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: #666;
-            font-weight: bold;
-        }
-
-        /* Layouts */
+        .mock-slide { background: #f0f2f5; border: 1px solid #e1e1e1; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #888; font-weight: bold; }
+        
         .layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
         .layout-2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
         .layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
         .layout-6 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); }
         .layout-8 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); }
 
-
-        /* Footer / Send Area */
+        /* Footer */
         .chat-footer {
-            background: white;
-            padding: 10px 15px;
-            border-top: 1px solid #eee;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            background: white; padding: 10px 15px; border-top: 1px solid #eee;
+            display: flex; flex-direction: column; gap: 10px;
         }
-
-        .summary-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--text-sub);
-        }
-
-        .price-tag {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #0084ff;
-        }
-
+        .summary-bar { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-sub); }
+        .price-tag { font-size: 1.4rem; font-weight: 800; color: #0084ff; }
+        
         .send-btn {
-            background: #0084ff;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 20px;
-            font-size: 1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            width: 100%;
-            box-sizing: border-box;
+            background: #0084ff; color: white; border: none;
+            padding: 12px; border-radius: 20px;
+            font-size: 1rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; cursor: pointer; text-decoration: none;
+            width: 100%; box-sizing: border-box;
         }
-
         .send-btn:hover { background: #0073e6; }
     </style>
 </head>
@@ -301,8 +205,6 @@
 
 <div class="phone-frame">
     <div class="notch"></div>
-    
-    <!-- Header -->
     <div class="chat-header">
         <div class="avatar">🖨️</div>
         <div class="header-info">
@@ -311,16 +213,19 @@
         </div>
     </div>
 
-    <!-- Chat Content -->
-    <div class="chat-content">
-        <!-- Message 1: User Request -->
-        <div class="bubble outgoing">
-            bhai!!! print hobe!?
+    <div class="chat-content" id="chatBox">
+        <!-- 1. User Message (Always Visible) -->
+        <div class="bubble outgoing">bhai!!! print hobe!?</div>
+
+        <!-- Typing Loader -->
+        <div class="typing-indicator" id="loader">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
         </div>
 
-        <!-- Message 2: Price List -->
-        <div class="bubble incoming">
-            Hobe mane? Albat hobe! 🔥<br>Rate dekhle toh nachte icche korbe! 💃
+        <!-- 2. Price Message -->
+        <div class="bubble incoming hidden-msg" id="msg-price">
+            Hobe mane? Albat hobe! 🔥<br>
+            Rate dekhle toh nachte icche korbe! 💃
             <div class="price-card-embed">
                 <div class="price-row"><span>B&W Single</span> <b>1.8 Tk</b></div>
                 <div class="price-row"><span>B&W Double</span> <b>2.2 Tk</b></div>
@@ -329,202 +234,205 @@
             </div>
         </div>
 
-        <!-- Message 3: Upload Prompt -->
-        <div class="bubble incoming">
+        <!-- 3. Prompt Message -->
+        <div class="bubble incoming hidden-msg" id="msg-prompt">
             Ar deri keno? File ta ekhanei upload den, baki magic dekhen! 🎩✨
         </div>
 
-        <!-- User Action: Upload -->
-        <div class="bubble outgoing" style="width: 100%; background: transparent; padding: 0; box-shadow: none;">
-            <div class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                <input type="file" id="fileInput" hidden multiple onchange="handleFileSelect(this)">
-                📂 <span id="fileName">Click to Upload File</span>
+        <!-- 4. Controls -->
+        <div class="bubble-group hidden-msg" id="msg-controls">
+            <!-- Upload -->
+            <div class="bubble outgoing" style="width: 100%; background: transparent; padding: 0; box-shadow: none;">
+                <div class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    <input type="file" id="fileInput" hidden multiple onchange="handleFileSelect(this)">
+                    📂 <span id="fileName">Click to Upload File</span>
+                </div>
             </div>
-        </div>
 
-        <!-- Settings Panel -->
-        <div class="bubble incoming" style="width: 90%;">
-            <div class="control-panel">
-                <div class="control-group">
-                    <label>Total Pages</label>
-                    <input type="number" id="totalPages" value="10" min="1" oninput="calculatePrice()">
-                </div>
-                <div class="control-group">
-                    <label>Slides/Page</label>
-                    <select id="slidesPerPage" onchange="calculatePrice()">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="4" selected>4</option>
-                        <option value="6">6</option>
-                        <option value="8">8</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>Print Type</label>
-                    <select id="printType" onchange="calculatePrice()">
-                        <option value="bw">B&W</option>
-                        <option value="color">Color</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>Sides</label>
-                    <select id="sides" onchange="calculatePrice()">
-                        <option value="single">Single</option>
-                        <option value="double" selected>Double</option>
-                    </select>
+            <!-- Settings -->
+            <div class="bubble incoming" style="width: 90%;">
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>Total Pages</label>
+                        <input type="number" id="totalPages" value="10" min="1" oninput="calculatePrice()">
+                    </div>
+                    <div class="control-group">
+                        <label>Slides/Page</label>
+                        <select id="slidesPerPage" onchange="calculatePrice()">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="4" selected>4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Print Type</label>
+                        <select id="printType" onchange="calculatePrice()">
+                            <option value="bw">B&W</option>
+                            <option value="color">Color</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Sides</label>
+                        <select id="sides" onchange="calculatePrice()">
+                            <option value="single">Single</option>
+                            <option value="double" selected>Double</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Mockup -->
-        <div class="mockup-container">
-            <div id="paperMockup" class="paper-sheet layout-4 landscape">
-                <!-- Slides generated by JS -->
+            <!-- Mockup -->
+            <div class="mockup-container">
+                <div id="paperMockup" class="paper-sheet layout-4 landscape"></div>
             </div>
         </div>
+        
     </div>
 
-    <!-- Footer -->
     <div class="chat-footer">
         <div class="summary-bar">
             <span id="sheetCount">0 Sheets</span>
             <span class="price-tag">৳ <span id="finalPrice">0</span></span>
         </div>
-        <a href="#" class="send-btn" onclick="sendToWhatsapp()">
-            Order dilam:) ->
-        </a>
-    </div>
+                <a href="#" class="send-btn" onclick="sendToWhatsapp()">
+                    Order dilam:)
+                </a>    </div>
 </div>
 
 <script>
-    // Initialize PDF.js
-    const pdfjsLib = window['pdfjs-dist/build/pdf'];
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    // --- Safe Animation Logic ---
+    function startChat() {
+        const loader = document.getElementById('loader');
+        const box = document.getElementById('chatBox');
+        
+        const scroll = () => box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+        
+        const steps = [
+            { delay: 600, action: () => { loader.style.display = 'flex'; box.insertBefore(loader, document.getElementById('msg-price')); scroll(); } },
+            { delay: 1800, action: () => { loader.style.display = 'none'; document.getElementById('msg-price').classList.add('fade-in'); scroll(); } },
+            
+            { delay: 2800, action: () => { loader.style.display = 'flex'; box.insertBefore(loader, document.getElementById('msg-prompt')); scroll(); } },
+            { delay: 4000, action: () => { loader.style.display = 'none'; document.getElementById('msg-prompt').classList.add('fade-in'); scroll(); } },
+            
+            { delay: 4800, action: () => { document.getElementById('msg-controls').classList.add('fade-in'); scroll(); } }
+        ];
 
+        let totalDelay = 0;
+        steps.forEach(step => {
+            totalDelay = step.delay;
+            setTimeout(step.action, totalDelay);
+        });
+
+        // Failsafe: Force show everything after 6 seconds if something blocks
+        setTimeout(() => {
+             document.querySelectorAll('.hidden-msg').forEach(el => el.classList.add('fade-in'));
+             loader.style.display = 'none';
+        }, 6000);
+    }
+
+    // Start everything when page loads
+    window.onload = function() {
+        calculatePrice(); // Init calculation
+        startChat(); // Start animation
+    };
+
+    // --- Core Logic ---
     async function handleFileSelect(input) {
         const fileNameDisplay = document.getElementById('fileName');
         const totalPagesInput = document.getElementById('totalPages');
+        const chatBox = document.getElementById('chatBox');
         
-        if (!input.files || input.files.length === 0) {
-            fileNameDisplay.textContent = "Click to Upload File";
-            return;
-        }
+        if (!input.files || input.files.length === 0) return;
 
         const files = input.files;
         fileNameDisplay.textContent = files.length === 1 ? files[0].name : `${files.length} files`;
         
         let detectedPages = 0;
-
-        for (const file of files) {
-            if (file.type === "application/pdf") {
-                try {
-                    const reader = new FileReader();
-                    const pdfData = await new Promise((resolve) => {
-                        reader.onload = () => resolve(new Uint8Array(reader.result));
-                        reader.readAsArrayBuffer(file);
-                    });
-                    
-                    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-                    detectedPages += pdf.numPages;
-                } catch (e) {
-                    console.error("Error reading PDF:", e);
-                    detectedPages += 1;
-                }
-            } else {
-                detectedPages += 1;
+        
+        // Try PDF JS
+        if (window['pdfjs-dist/build/pdf']) {
+            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            
+            for (const file of files) {
+                if (file.type === "application/pdf") {
+                    try {
+                        const reader = new FileReader();
+                        const pdfData = await new Promise((r) => { reader.onload = () => r(new Uint8Array(reader.result)); reader.readAsArrayBuffer(file); });
+                        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                        detectedPages += pdf.numPages;
+                    } catch (e) { detectedPages += 1; }
+                } else { detectedPages += 1; }
             }
+        } else {
+            detectedPages = files.length; // Fallback
         }
 
         if (detectedPages > 0) {
             totalPagesInput.value = detectedPages;
             calculatePrice();
-        }
-    }
-
-    function updateMockup(n) {
-        const sheet = document.getElementById('paperMockup');
-        // Update layout class
-        sheet.className = 'paper-sheet layout-' + n;
-        
-        // Handle Orientation: 4 and 6 are Landscape
-        if (n == 4 || n == 6) {
-            sheet.classList.add('landscape');
-        } else {
-            sheet.classList.remove('landscape');
-        }
-        
-        // Clear existing
-        sheet.innerHTML = '';
-        
-        // Add slides
-        for(let i=0; i<n; i++) {
-            const div = document.createElement('div');
-            div.className = 'mock-slide';
-            div.innerText = i+1;
-            sheet.appendChild(div);
+            
+            // Add "File Received" Bubble
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble incoming fade-in';
+            bubble.style.marginTop = '10px';
+            bubble.innerHTML = `File peyechi! <b>${detectedPages} pages</b> count korlam. Calculation updated! ✅`;
+            
+            // Insert before controls
+            const controls = document.getElementById('msg-controls');
+            chatBox.insertBefore(bubble, controls);
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
         }
     }
 
     function calculatePrice() {
-        const prices = {
-            bw: { single: 1.8, double: 2.2 },
-            color: { single: 2.5, double: 3.0 }
-        };
+        const prices = { bw: { single: 1.8, double: 2.2 }, color: { single: 2.5, double: 3.0 } };
+        
+        let total = parseInt(document.getElementById('totalPages').value) || 0;
+        let slides = parseInt(document.getElementById('slidesPerPage').value) || 1;
+        let type = document.getElementById('printType').value;
+        let sides = document.getElementById('sides').value;
 
-        let totalDocPages = parseInt(document.getElementById('totalPages').value) || 0;
-        const slidesPerPage = parseInt(document.getElementById('slidesPerPage').value) || 1;
-        const type = document.getElementById('printType').value;
-        const sides = document.getElementById('sides').value;
-
-        // Update Mockup
-        updateMockup(slidesPerPage);
-
-        // Logic
-        let logicalPagesToPrint = Math.ceil(totalDocPages / slidesPerPage);
-        let sheets = 0;
-        let rate = 0;
-
-        if (sides === 'single') {
-            sheets = logicalPagesToPrint;
-            rate = prices[type].single;
-        } else {
-            sheets = Math.ceil(logicalPagesToPrint / 2);
-            rate = prices[type].double;
+        // Mockup
+        const sheet = document.getElementById('paperMockup');
+        sheet.className = 'paper-sheet layout-' + slides + (slides == 4 || slides == 6 ? ' landscape' : '');
+        sheet.innerHTML = '';
+        for(let i=0; i<slides; i++) {
+            let div = document.createElement('div');
+            div.className = 'mock-slide';
+            div.innerText = i+1;
+            sheet.appendChild(div);
         }
 
-        const totalCost = sheets * rate;
+        // Calc
+        let logical = Math.ceil(total / slides);
+        let sheets = (sides === 'single') ? logical : Math.ceil(logical / 2);
+        let cost = sheets * prices[type][sides];
 
-        document.getElementById('finalPrice').innerText = totalCost.toFixed(2);
-        document.getElementById('sheetCount').innerText = sheets + (sheets === 1 ? " Sheet" : " Sheets");
+        document.getElementById('finalPrice').innerText = cost.toFixed(2);
+        document.getElementById('sheetCount').innerText = sheets + (sheets===1?" Sheet":" Sheets");
 
-        return { totalDocPages, slidesPerPage, type, sides, sheets, totalCost };
+        return { total, slides, type, sides, sheets, cost };
     }
 
     function sendToWhatsapp() {
         const data = calculatePrice();
-        const phone = "8801339129852";
+        const text = `*New Print Order Request*\n------------------\n📄 *File:* ${document.getElementById('fileInput').files[0]?.name || "Not uploaded"}\n🔢 *Pages:* ${data.total}\n🖼 *Slides:* ${data.slides}\n🎨 *Type:* ${data.type}\n📄 *Sides:* ${data.sides}\n------------------\n📃 *Sheets:* ${data.sheets}\n💰 *Total:* ${data.cost} Tk\n------------------\nConfirm please!`;
         
-        const text = `
-*New Print Order Request*
-------------------
-📄 *File:* ${document.getElementById('fileInput').files[0]?.name || "Not uploaded yet"}
-🔢 *Total Pages:* ${data.totalDocPages}
-🖼 *Slides/Page:* ${data.slidesPerPage}
-🎨 *Type:* ${data.type === 'bw' ? 'B&W' : 'Color'}
-📄 *Sides:* ${data.sides}
-------------------
-📃 *Sheets:* ${data.sheets}
-💰 *Total:* ${data.totalCost} Tk
-------------------
-Confirm please!
-`.trim();
+        // Copy to clipboard
+        navigator.clipboard.writeText(text).then(() => {
+            // Visual feedback
+            const btn = document.querySelector('.send-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "Copied! Opening WhatsApp...";
+            setTimeout(() => btn.innerText = originalText, 3000);
+        }).catch(err => console.error('Clipboard failed:', err));
 
-        const encodedText = encodeURIComponent(text);
-        window.open(`https://wa.me/${phone}?text=${encodedText}`, '_blank');
+        // Open WhatsApp
+        window.open(`https://wa.me/8801339129852?text=${encodeURIComponent(text)}`, '_blank');
     }
-
-    // Init
-    calculatePrice();
 </script>
 
 </body>
