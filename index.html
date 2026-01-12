@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print hobe?</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+Bengali:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
             --bg-body: #d4c5b0;
@@ -57,7 +56,13 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             flex-shrink: 0; z-index: 10;
         }
-        .avatar { font-size: 24px; background: rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
+        .avatar { 
+            width: 44px; height: 44px; border-radius: 50%; 
+            background: white; overflow: hidden; display: flex;
+            align-items: center; justify-content: center;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .title h1 { margin: 0; font-size: 1.2rem; font-weight: 700; }
         .title p { margin: 0; font-size: 0.75rem; opacity: 0.85; display: flex; align-items: center; gap: 6px; }
         .dot-online { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; }
@@ -188,7 +193,9 @@
     
     <!-- Header -->
     <header class="header">
-        <div class="avatar">🖨️</div>
+        <div class="avatar">
+            <img src="Gemini_Generated_Image_s3k9ubs3k9ubs3k9(1).png" alt="Logo">
+        </div>
         <div class="title">
             <h1>Print hobe?</h1>
             <p><span class="dot-online"></span> Active now</p>
@@ -218,12 +225,11 @@
 
         <!-- 4. Controls (Hidden) -->
         <div class="controls-wrapper hidden" id="msg-controls">
-            <!-- Upload -->
+            <!-- File Link Input -->
             <div class="bubble outgoing" style="background: transparent; padding: 0; box-shadow: none;">
-                <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                    <input type="file" id="fileInput" hidden multiple onchange="processFiles(this.files)">
-                    <div id="fileStatus">📂 Click or Drag File</div>
-                </div>
+                <input type="text" id="inpFile" placeholder="Paste Drive Link or type 'Sending on WA'" 
+                       style="width: 100%; padding: 16px; border: 2px solid var(--primary); border-radius: 12px; font-family: inherit; font-size: 0.95rem; outline: none; background: #f0f7ff; color: var(--primary);"
+                       oninput="updateCalc()">
             </div>
 
             <!-- Settings -->
@@ -366,57 +372,17 @@
         document.getElementById('txtSheets').innerText = physical + (physical===1?' Sheet':' Sheets');
 
         // Update Draft
-        const fName = document.getElementById('fileStatus').innerText.replace('📂 ', '').replace('📄 ', '').replace('🖼️ ', '').replace('📚 ', '');
+        const fileLink = document.getElementById('inpFile').value || "Will send on WhatsApp";
         const loc = document.getElementById('inpLocation').value || "Not set";
         const mob = document.getElementById('inpMobile').value || "Not set";
         
-        const draft = `eije order -\n------------------\n📍 Loc: ${loc}\n📱 Mob: ${mob}\n------------------\n📄 File: ${fName}\n🔢 Pages: ${pages}\n🖼 Slides: ${slides}\n🎨 Type: ${type.toUpperCase()}\n📄 Sides: ${sides.toUpperCase()}\n------------------\n📃 Sheets: ${physical}\n💰 TOTAL: ${cost} Tk`;
+        const draft = `eije order -\n------------------\n📍 Loc: ${loc}\n📱 Mob: ${mob}\n------------------\n🔗 File: ${fileLink}\n🔢 Pages: ${pages}\n🖼 Slides: ${slides}\n🎨 Type: ${type.toUpperCase()}\n📄 Sides: ${sides.toUpperCase()}\n------------------\n📃 Sheets: ${physical}\n💰 TOTAL: ${cost} Tk`;
         document.getElementById('txtDraft').value = draft;
         
         return draft;
     }
 
-    // --- 3. File Handler ---
-    async function processFiles(files) {
-        if (!files.length) return;
-        
-        const status = document.getElementById('fileStatus');
-        const f = files[0];
-        
-        if (files.length > 1) status.innerText = `📚 ${files.length} files`;
-        else status.innerText = (f.type.includes('pdf') ? '📄 ' : '🖼️ ') + f.name;
-
-        // PDF Page Count
-        let p = files.length; // Default to 1 page per file
-        if (window.pdfjsLib) {
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            for (const file of files) {
-                if (file.type === "application/pdf") {
-                    try {
-                        const ab = await file.arrayBuffer();
-                        const pdf = await pdfjsLib.getDocument(ab).promise;
-                        p = (files.length === 1) ? pdf.numPages : p + pdf.numPages - 1; 
-                    } catch(e) { console.log(e); }
-                }
-            }
-        }
-        
-        document.getElementById('inpPages').value = p;
-        updateCalc();
-
-        // Confirmation Bubble
-        const b = document.createElement('div');
-        b.className = 'bubble incoming anim-pop';
-        b.style.marginTop = '10px';
-        b.innerHTML = `File peyechi! <b>${p} pages</b> count korlam. ✅`;
-        
-        // Insert before controls
-        const controls = document.getElementById('msg-controls');
-        chat.insertBefore(b, controls);
-        chat.scrollTop = chat.scrollHeight;
-    }
-
-    // --- 4. Order Handler ---
+    // --- 3. Order Handler ---
     function sendOrder() {
         const text = updateCalc();
         navigator.clipboard.writeText(text);
@@ -428,19 +394,10 @@
         window.open(`https://wa.me/8801339129852?text=${encodeURIComponent(text)}`, '_blank');
     }
 
-    // --- 5. Init ---
+    // --- 4. Init ---
     window.onload = () => {
         updateCalc(); // Prep UI
         startSequence(); // Run Animation
-
-        // Drag Drop Init
-        const drop = document.getElementById('dropZone');
-        drop.ondragover = (e) => { e.preventDefault(); drop.classList.add('active'); };
-        drop.ondragleave = () => drop.classList.remove('active');
-        drop.ondrop = (e) => { 
-            e.preventDefault(); drop.classList.remove('active'); 
-            processFiles(e.dataTransfer.files); 
-        };
     };
 </script>
 
