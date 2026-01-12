@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CloudPrint - Instant Quote</title>
+    <title>Print lagbe? - Instant Quote</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -37,17 +38,17 @@
             padding: 2rem;
             border-radius: 20px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            margin-top: 2rem;
+            margin-top: 1rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         h1 {
             color: var(--text-main);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin: 0 0 0.5rem 0;
             display: flex;
             align-items: center;
@@ -59,6 +60,40 @@
             color: var(--text-muted);
             margin: 0;
             font-size: 0.9rem;
+        }
+
+        .price-list-box {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .price-list-box h3 {
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .price-item:last-child {
+            border-bottom: none;
         }
 
         .upload-section {
@@ -91,6 +126,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-bottom: 1rem;
+            align-items: start;
         }
 
         .form-group {
@@ -128,12 +164,80 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        /* Mockup Styles */
+        .mockup-wrapper {
+            grid-column: span 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        
+        .mockup-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .paper-sheet {
+            background: white;
+            width: 100px;
+            height: 141px; /* A4 Ratio 1:1.414 (Portrait) */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #cbd5e1;
+            display: grid; /* Changed to Grid for robustness */
+            padding: 4px;
+            box-sizing: border-box;
+            gap: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .paper-sheet.landscape {
+            width: 141px;
+            height: 100px;
+        }
+
+        .mock-slide {
+            background: #e2e8f0;
+            border: 1px solid #94a3b8;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #64748b;
+            border-radius: 2px;
+            font-weight: bold;
+            width: 100%; /* Fill grid cell */
+            height: 100%; /* Fill grid cell */
+        }
+
+        /* Layouts (Grid Templates) */
+        .layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+        .layout-1 .mock-slide { background: #dbeafe; border-color: #3b82f6; color: #1d4ed8; }
+        
+        .layout-2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+        
+        /* 4-up: 2x2 */
+        .layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        
+        /* 6-up: 2 cols x 3 rows */
+        .layout-6 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); }
+        
+        /* 8-up: 2 cols x 4 rows */
+        .layout-8 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); }
+
         .summary-card {
             background: #0f172a;
             color: white;
             padding: 1.5rem;
             border-radius: 16px;
-            margin-top: 2rem;
+            margin-top: 1rem;
             position: relative;
             overflow: hidden;
         }
@@ -197,7 +301,7 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            .form-group.full-width {
+            .form-group.full-width, .mockup-wrapper {
                 grid-column: span 1;
             }
         }
@@ -207,9 +311,31 @@
 
 <div class="container">
     <header>
-        <h1>☁️ Cloud Print</h1>
-        <p class="subtitle">Instant Cost Estimation & Ordering</p>
+        <h1>📄 Print lagbe?</h1>
+        <p class="subtitle">Quick Estimation & Instant Ordering</p>
+        <a href="https://www.facebook.com/profile.php?id=61586188898471" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; text-decoration: none; color: #3b5998; font-weight: 500; font-size: 0.9rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+            </svg>
+            Visit us on Facebook
+        </a>
     </header>
+
+    <div class="price-list-box">
+        <h3>Current Pricing (per sheet)</h3>
+        <div class="price-grid">
+            <div>
+                <strong>B&W</strong>
+                <div class="price-item"><span>Single:</span> <span>1.8 Tk</span></div>
+                <div class="price-item"><span>Double:</span> <span>2.2 Tk</span></div>
+            </div>
+            <div>
+                <strong>Color</strong>
+                <div class="price-item"><span>Single:</span> <span>2.5 Tk</span></div>
+                <div class="price-item"><span>Double:</span> <span>3.0 Tk</span></div>
+            </div>
+        </div>
+    </div>
     
     <div class="upload-section" onclick="document.getElementById('fileInput').click()">
         <div class="upload-icon">📄</div>
@@ -230,9 +356,9 @@
             <select id="slidesPerPage" onchange="calculatePrice()">
                 <option value="1">1 Slide (Normal)</option>
                 <option value="2">2 Slides</option>
-                <option value="4">4 Slides</option>
+                <option value="4" selected>4 Slides</option>
                 <option value="6">6 Slides</option>
-                <option value="9">9 Slides</option>
+                <option value="8">8 Slides</option>
             </select>
         </div>
 
@@ -242,6 +368,14 @@
                 <option value="single">Single Side</option>
                 <option value="double" selected>Double Side</option>
             </select>
+        </div>
+        
+        <!-- Mockup Visualizer -->
+        <div class="mockup-wrapper">
+            <div class="mockup-label">Page Preview</div>
+            <div id="paperMockup" class="paper-sheet layout-1">
+                <div class="mock-slide">1</div>
+            </div>
         </div>
 
         <div class="form-group full-width">
@@ -277,20 +411,84 @@
 </div>
 
 <script>
-    function handleFileSelect(input) {
+    // Initialize PDF.js
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    async function handleFileSelect(input) {
         const fileNameDisplay = document.getElementById('fileName');
-        if (input.files && input.files.length > 0) {
-            fileNameDisplay.textContent = "Selected: " + input.files[0].name;
-        } else {
+        const totalPagesInput = document.getElementById('totalPages');
+        
+        if (!input.files || input.files.length === 0) {
             fileNameDisplay.textContent = "";
+            return;
+        }
+
+        const files = input.files;
+        fileNameDisplay.textContent = files.length === 1 ? `Selected: ${files[0].name}` : `${files.length} files selected`;
+        
+        let detectedPages = 0;
+
+        for (const file of files) {
+            if (file.type === "application/pdf") {
+                try {
+                    const reader = new FileReader();
+                    const pdfData = await new Promise((resolve) => {
+                        reader.onload = () => resolve(new Uint8Array(reader.result));
+                        reader.readAsArrayBuffer(file);
+                    });
+                    
+                    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                    detectedPages += pdf.numPages;
+                } catch (e) {
+                    console.error("Error reading PDF:", e);
+                    detectedPages += 1; // Fallback
+                }
+            } else {
+                // For images or other docs, assume 1 page per file
+                detectedPages += 1;
+            }
+        }
+
+        if (detectedPages > 0) {
+            totalPagesInput.value = detectedPages;
+            calculatePrice();
+            
+            // Visual feedback
+            totalPagesInput.style.backgroundColor = "#dcfce7";
+            setTimeout(() => totalPagesInput.style.backgroundColor = "", 1000);
+        }
+    }
+
+    function updateMockup(n) {
+        const sheet = document.getElementById('paperMockup');
+        // Update layout class
+        sheet.className = 'paper-sheet layout-' + n;
+        
+        // Handle Orientation: 4 and 6 are Landscape
+        if (n == 4 || n == 6) {
+            sheet.classList.add('landscape');
+        } else {
+            sheet.classList.remove('landscape');
+        }
+        
+        // Clear existing
+        sheet.innerHTML = '';
+        
+        // Add slides
+        for(let i=0; i<n; i++) {
+            const div = document.createElement('div');
+            div.className = 'mock-slide';
+            div.innerText = i+1;
+            sheet.appendChild(div);
         }
     }
 
     function calculatePrice() {
         // --- PRICING CONFIGURATION ---
         const prices = {
-            bw: { single: 2.0, double: 3.0 }, // Example rates: adjust as needed
-            color: { single: 10.0, double: 15.0 }
+            bw: { single: 1.8, double: 2.2 }, // Updated rates
+            color: { single: 2.5, double: 3.0 }
         };
 
         // --- INPUTS ---
@@ -299,10 +497,14 @@
         const type = document.getElementById('printType').value;
         const sides = document.getElementById('sides').value;
 
+        // --- UPDATE MOCKUP ---
+        if (typeof updateMockup === 'function') {
+             updateMockup(slidesPerPage);
+        }
+
         // --- CALCULATION LOGIC ---
         
         // 1. Calculate how many "Logical Pages" we have after putting slides together
-        // Example: 10 doc pages, 2 slides/page => 5 logical pages to print
         let logicalPagesToPrint = Math.ceil(totalDocPages / slidesPerPage);
 
         // 2. Calculate Physical Sheets based on Siding
