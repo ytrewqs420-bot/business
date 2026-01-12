@@ -3,411 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print lagbe? - Instant Quote</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Print hobe? - Instant Quote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #64748b;
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --success: #22c55e;
+            /* Extracted from Poster */
+            --bg-outer: #d1c4ae; /* Warm Beige/Brown */
+            --header-bg: #1e3a8a; /* Deep Blue */
+            --header-text: #ffffff;
+            --chat-bg: #e4e6eb; /* Messenger Light Gray */
+            --bubble-incoming: #ffffff;
+            --bubble-outgoing: #0084ff; /* Messenger Blue */
+            --text-main: #050505;
+            --text-sub: #65676b;
+            --success: #0084ff;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
+            font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
+            background-color: var(--bg-outer);
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZDljMmFlIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNjNWI0OWIiLz4KPC9zdmc+'); /* Subtle texture */
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
         }
 
-        .container {
-            background: var(--surface);
+        /* Phone Container */
+        .phone-frame {
+            background: #ffffff;
             width: 100%;
-            max-width: 480px;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            margin-top: 1rem;
+            max-width: 420px;
+            height: 85vh;
+            max-height: 850px;
+            border-radius: 40px;
+            border: 12px solid #1a1a1a;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.4), inset 0 0 0 2px #333;
+            display: flex;
+            flex-direction: column;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 1.5rem;
+        /* Notch */
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 25px;
+            background: #1a1a1a;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 10;
         }
 
-        h1 {
-            color: var(--text-main);
-            font-size: 1.8rem;
-            margin: 0 0 0.5rem 0;
+        /* Chat Header */
+        .chat-header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 2.5rem 1rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            font-size: 20px;
         }
 
-        p.subtitle {
-            color: var(--text-muted);
+        .header-info h1 {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .header-info p {
+            margin: 0;
+            font-size: 0.75rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .price-list-box {
-            background: #f1f5f9;
-            border-radius: 12px;
+        .active-indicator {
+            width: 8px;
+            height: 8px;
+            background: #31a24c;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Chat Content Area */
+        .chat-content {
+            flex: 1;
+            background: var(--chat-bg);
             padding: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
-            border: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .price-list-box h3 {
-            margin-top: 0;
-            margin-bottom: 0.75rem;
+        /* Bubbles */
+        .bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
             font-size: 0.95rem;
-            color: var(--primary);
-            text-align: center;
+            line-height: 1.4;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .price-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .bubble.incoming {
+            background: var(--bubble-incoming);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-top-left-radius: 4px;
         }
 
-        .price-item {
+        .bubble.outgoing {
+            background: var(--bubble-outgoing);
+            color: white;
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+
+        /* Price Card in Chat */
+        .price-card-embed {
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #eee;
+            font-size: 0.85rem;
+        }
+        
+        .price-row {
             display: flex;
             justify-content: space-between;
             padding: 4px 0;
-            border-bottom: 1px dashed #cbd5e1;
+            border-bottom: 1px solid #f0f0f0;
         }
+        
+        .price-row:last-child { border: none; }
 
-        .price-item:last-child {
-            border-bottom: none;
-        }
-
-        .upload-section {
-            border: 2px dashed var(--border);
+        /* Form Controls stylized as "Inputs" */
+        .control-panel {
+            background: white;
             border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #f1f5f9;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .upload-section:hover {
-            border-color: var(--primary);
-            background: #eff6ff;
-            color: var(--primary);
-        }
-
-        .upload-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--secondary);
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            align-items: start;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
+        .control-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        select, input[type="number"] {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f0f2f5;
+            font-size: 0.9rem;
             color: var(--text-main);
+            width: 120px;
         }
 
-        input, select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            box-sizing: border-box;
-            background: #fff;
-            transition: border-color 0.2s;
-            color: var(--text-main);
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        /* Mockup Styles */
-        .mockup-wrapper {
-            grid-column: span 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 1rem;
+        /* Upload Area */
+        .upload-btn {
+            background: white;
+            border: 2px dashed #0084ff;
+            color: #0084ff;
+            padding: 15px;
             border-radius: 12px;
-            margin-bottom: 1rem;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
         }
         
-        .mockup-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        .upload-btn:hover {
+            background: #e7f3ff;
+        }
+
+        /* Mockup in Chat */
+        .mockup-container {
+            align-self: center;
+            background: transparent;
+            padding: 10px;
         }
 
         .paper-sheet {
             background: white;
-            width: 100px;
-            height: 141px; /* A4 Ratio 1:1.414 (Portrait) */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 1px solid #cbd5e1;
-            display: grid; /* Changed to Grid for robustness */
-            padding: 4px;
+            width: 80px; /* Smaller for chat */
+            height: 113px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            display: grid;
+            padding: 3px;
             box-sizing: border-box;
-            gap: 2px;
-            transition: all 0.3s ease;
+            gap: 1px;
+            transition: all 0.3s;
         }
-
-        .paper-sheet.landscape {
-            width: 141px;
-            height: 100px;
-        }
+        
+        .paper-sheet.landscape { width: 113px; height: 80px; }
 
         .mock-slide {
-            background: #e2e8f0;
-            border: 1px solid #94a3b8;
-            box-sizing: border-box;
+            background: #f0f2f5;
+            border: 1px solid #ccc;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            color: #64748b;
-            border-radius: 2px;
+            font-size: 8px;
+            color: #666;
             font-weight: bold;
-            width: 100%; /* Fill grid cell */
-            height: 100%; /* Fill grid cell */
         }
 
-        /* Layouts (Grid Templates) */
+        /* Layouts */
         .layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
-        .layout-1 .mock-slide { background: #dbeafe; border-color: #3b82f6; color: #1d4ed8; }
-        
         .layout-2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-        
-        /* 4-up: 2x2 */
         .layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-        
-        /* 6-up: 2 cols x 3 rows */
         .layout-6 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); }
-        
-        /* 8-up: 2 cols x 4 rows */
         .layout-8 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); }
 
-        .summary-card {
-            background: #0f172a;
-            color: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            margin-top: 1rem;
-            position: relative;
-            overflow: hidden;
+
+        /* Footer / Send Area */
+        .chat-footer {
+            background: white;
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .summary-row {
+        .summary-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
             font-size: 0.9rem;
-            color: #94a3b8;
+            color: var(--text-sub);
         }
 
-        .summary-row.highlight {
-            color: white;
-            font-weight: 500;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #334155;
-            font-size: 1.1rem;
+        .price-tag {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #0084ff;
         }
 
-        .total-price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--success);
-            line-height: 1;
-            margin: 0.5rem 0;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 1rem;
-            background: var(--success); /* WhatsApp Green-ish */
+        .send-btn {
+            background: #0084ff;
             color: white;
             border: none;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 20px;
             font-size: 1rem;
             font-weight: 600;
-            cursor: pointer;
-            margin-top: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.1s, background 0.2s;
+            cursor: pointer;
             text-decoration: none;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .btn-primary:hover {
-            background: #16a34a;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        /* Responsive */
-        @media (max-width: 400px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            .form-group.full-width, .mockup-wrapper {
-                grid-column: span 1;
-            }
-        }
+        .send-btn:hover { background: #0073e6; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>📄 Print lagbe?</h1>
-        <p class="subtitle">Quick Estimation & Instant Ordering</p>
-        <a href="https://www.facebook.com/profile.php?id=61586188898471" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; text-decoration: none; color: #3b5998; font-weight: 500; font-size: 0.9rem;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
-            </svg>
-            Visit us on Facebook
-        </a>
-    </header>
-
-    <div class="price-list-box">
-        <h3>Current Pricing (per sheet)</h3>
-        <div class="price-grid">
-            <div>
-                <strong>B&W</strong>
-                <div class="price-item"><span>Single:</span> <span>1.8 Tk</span></div>
-                <div class="price-item"><span>Double:</span> <span>2.2 Tk</span></div>
-            </div>
-            <div>
-                <strong>Color</strong>
-                <div class="price-item"><span>Single:</span> <span>2.5 Tk</span></div>
-                <div class="price-item"><span>Double:</span> <span>3.0 Tk</span></div>
-            </div>
-        </div>
-    </div>
+<div class="phone-frame">
+    <div class="notch"></div>
     
-    <div class="upload-section" onclick="document.getElementById('fileInput').click()">
-        <div class="upload-icon">📄</div>
-        <strong>Tap to Upload File</strong>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">PDF, DOCX, PPTX (Optional)</p>
-        <input type="file" id="fileInput" hidden multiple onchange="handleFileSelect(this)">
-        <p id="fileName" style="font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-top: 8px;"></p>
+    <!-- Header -->
+    <div class="chat-header">
+        <div class="avatar">🖨️</div>
+        <div class="header-info">
+            <h1>Print hobe?</h1>
+            <p><span class="active-indicator"></span> Active now</p>
+        </div>
     </div>
 
-    <div class="form-grid">
-        <div class="form-group full-width">
-            <label>Total Pages in Document</label>
-            <input type="number" id="totalPages" value="10" min="1" oninput="calculatePrice()">
+    <!-- Chat Content -->
+    <div class="chat-content">
+        <!-- Message 1: User Request -->
+        <div class="bubble outgoing">
+            bhai!!! print hobe!?
         </div>
 
-        <div class="form-group">
-            <label>Slides Per Page</label>
-            <select id="slidesPerPage" onchange="calculatePrice()">
-                <option value="1">1 Slide (Normal)</option>
-                <option value="2">2 Slides</option>
-                <option value="4" selected>4 Slides</option>
-                <option value="6">6 Slides</option>
-                <option value="8">8 Slides</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Paper Sides</label>
-            <select id="sides" onchange="calculatePrice()">
-                <option value="single">Single Side</option>
-                <option value="double" selected>Double Side</option>
-            </select>
-        </div>
-        
-        <!-- Mockup Visualizer -->
-        <div class="mockup-wrapper">
-            <div class="mockup-label">Page Preview</div>
-            <div id="paperMockup" class="paper-sheet layout-1">
-                <div class="mock-slide">1</div>
+        <!-- Message 2: Price List -->
+        <div class="bubble incoming">
+            Hobe mane? Albat hobe! 🔥<br>Rate dekhle toh nachte icche korbe! 💃
+            <div class="price-card-embed">
+                <div class="price-row"><span>B&W Single</span> <b>1.8 Tk</b></div>
+                <div class="price-row"><span>B&W Double</span> <b>2.2 Tk</b></div>
+                <div class="price-row"><span>Color Single</span> <b>2.5 Tk</b></div>
+                <div class="price-row"><span>Color Double</span> <b>3.0 Tk</b></div>
             </div>
         </div>
 
-        <div class="form-group full-width">
-            <label>Print Color</label>
-            <select id="printType" onchange="calculatePrice()">
-                <option value="bw">Black & White (Economy)</option>
-                <option value="color">Full Color (Standard)</option>
-            </select>
+        <!-- Message 3: Upload Prompt -->
+        <div class="bubble incoming">
+            Ar deri keno? File ta ekhanei upload den, baki magic dekhen! 🎩✨
+        </div>
+
+        <!-- User Action: Upload -->
+        <div class="bubble outgoing" style="width: 100%; background: transparent; padding: 0; box-shadow: none;">
+            <div class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" hidden multiple onchange="handleFileSelect(this)">
+                📂 <span id="fileName">Click to Upload File</span>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="bubble incoming" style="width: 90%;">
+            <div class="control-panel">
+                <div class="control-group">
+                    <label>Total Pages</label>
+                    <input type="number" id="totalPages" value="10" min="1" oninput="calculatePrice()">
+                </div>
+                <div class="control-group">
+                    <label>Slides/Page</label>
+                    <select id="slidesPerPage" onchange="calculatePrice()">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="4" selected>4</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Print Type</label>
+                    <select id="printType" onchange="calculatePrice()">
+                        <option value="bw">B&W</option>
+                        <option value="color">Color</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Sides</label>
+                    <select id="sides" onchange="calculatePrice()">
+                        <option value="single">Single</option>
+                        <option value="double" selected>Double</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mockup -->
+        <div class="mockup-container">
+            <div id="paperMockup" class="paper-sheet layout-4 landscape">
+                <!-- Slides generated by JS -->
+            </div>
         </div>
     </div>
 
-    <div class="summary-card">
-        <div class="summary-row">
-            <span>Physical Sheets Needed</span>
-            <span id="sheetCount">0</span>
+    <!-- Footer -->
+    <div class="chat-footer">
+        <div class="summary-bar">
+            <span id="sheetCount">0 Sheets</span>
+            <span class="price-tag">৳ <span id="finalPrice">0</span></span>
         </div>
-        <div class="summary-row">
-            <span>Rate per Sheet</span>
-            <span id="rateDisplay">0 Tk</span>
-        </div>
-        <div class="summary-row highlight">
-            <span>Estimated Total</span>
-            <div class="total-price">৳ <span id="finalPrice">0</span></div>
-        </div>
+        <a href="#" class="send-btn" onclick="sendToWhatsapp()">
+            Send Order via WhatsApp <span style="font-size: 1.2rem;">➤</span>
+        </a>
     </div>
-
-    <a href="#" id="whatsappLink" class="btn-primary" onclick="sendToWhatsapp()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/>
-        </svg>
-        Confirm Order via WhatsApp
-    </a>
 </div>
 
 <script>
@@ -420,12 +406,12 @@
         const totalPagesInput = document.getElementById('totalPages');
         
         if (!input.files || input.files.length === 0) {
-            fileNameDisplay.textContent = "";
+            fileNameDisplay.textContent = "Click to Upload File";
             return;
         }
 
         const files = input.files;
-        fileNameDisplay.textContent = files.length === 1 ? `Selected: ${files[0].name}` : `${files.length} files selected`;
+        fileNameDisplay.textContent = files.length === 1 ? files[0].name : `${files.length} files`;
         
         let detectedPages = 0;
 
@@ -442,10 +428,9 @@
                     detectedPages += pdf.numPages;
                 } catch (e) {
                     console.error("Error reading PDF:", e);
-                    detectedPages += 1; // Fallback
+                    detectedPages += 1;
                 }
             } else {
-                // For images or other docs, assume 1 page per file
                 detectedPages += 1;
             }
         }
@@ -453,10 +438,6 @@
         if (detectedPages > 0) {
             totalPagesInput.value = detectedPages;
             calculatePrice();
-            
-            // Visual feedback
-            totalPagesInput.style.backgroundColor = "#dcfce7";
-            setTimeout(() => totalPagesInput.style.backgroundColor = "", 1000);
         }
     }
 
@@ -485,80 +466,64 @@
     }
 
     function calculatePrice() {
-        // --- PRICING CONFIGURATION ---
         const prices = {
-            bw: { single: 1.8, double: 2.2 }, // Updated rates
+            bw: { single: 1.8, double: 2.2 },
             color: { single: 2.5, double: 3.0 }
         };
 
-        // --- INPUTS ---
         let totalDocPages = parseInt(document.getElementById('totalPages').value) || 0;
         const slidesPerPage = parseInt(document.getElementById('slidesPerPage').value) || 1;
         const type = document.getElementById('printType').value;
         const sides = document.getElementById('sides').value;
 
-        // --- UPDATE MOCKUP ---
-        if (typeof updateMockup === 'function') {
-             updateMockup(slidesPerPage);
-        }
+        // Update Mockup
+        updateMockup(slidesPerPage);
 
-        // --- CALCULATION LOGIC ---
-        
-        // 1. Calculate how many "Logical Pages" we have after putting slides together
+        // Logic
         let logicalPagesToPrint = Math.ceil(totalDocPages / slidesPerPage);
-
-        // 2. Calculate Physical Sheets based on Siding
         let sheets = 0;
         let rate = 0;
 
         if (sides === 'single') {
-            // Single Sided: 1 logical page = 1 sheet
             sheets = logicalPagesToPrint;
             rate = prices[type].single;
         } else {
-            // Double Sided: 2 logical pages = 1 sheet
             sheets = Math.ceil(logicalPagesToPrint / 2);
             rate = prices[type].double;
         }
 
         const totalCost = sheets * rate;
 
-        // --- UPDATE UI ---
         document.getElementById('finalPrice').innerText = totalCost.toFixed(2);
-        document.getElementById('sheetCount').innerText = sheets;
-        document.getElementById('rateDisplay').innerText = rate + " Tk";
+        document.getElementById('sheetCount').innerText = sheets + (sheets === 1 ? " Sheet" : " Sheets");
 
         return { totalDocPages, slidesPerPage, type, sides, sheets, totalCost };
     }
 
     function sendToWhatsapp() {
         const data = calculatePrice();
-        const phone = "8801339129852"; // User's number
+        const phone = "8801339129852";
         
-        // Format the message
         const text = `
 *New Print Order Request*
 ------------------
-📄 *Document:* ${document.getElementById('fileInput').files[0]?.name || "Not uploaded yet"}
-🔢 *Total Doc Pages:* ${data.totalDocPages}
-🖼 *Slides per Page:* ${data.slidesPerPage}
-🎨 *Type:* ${data.type === 'bw' ? 'Black & White' : 'Color'}
-📄 *Sides:* ${data.sides === 'single' ? 'Single' : 'Double'}
+📄 *File:* ${document.getElementById('fileInput').files[0]?.name || "Not uploaded yet"}
+🔢 *Total Pages:* ${data.totalDocPages}
+🖼 *Slides/Page:* ${data.slidesPerPage}
+🎨 *Type:* ${data.type === 'bw' ? 'B&W' : 'Color'}
+📄 *Sides:* ${data.sides}
 ------------------
-📃 *Sheets Required:* ${data.sheets}
-💰 *Estimated Cost:* ${data.totalCost} Tk
+📃 *Sheets:* ${data.sheets}
+💰 *Total:* ${data.totalCost} Tk
 ------------------
-Please confirm my order.
+Confirm please!
 `.trim();
 
         const encodedText = encodeURIComponent(text);
-        const url = `https://wa.me/${phone}?text=${encodedText}`;
-        
-        // Open WhatsApp
-        window.open(url, '_blank');
+        window.open(`https://wa.me/${phone}?text=${encodedText}`, '_blank');
     }
 
-    // Run calculation on load
+    // Init
     calculatePrice();
 </script>
 
