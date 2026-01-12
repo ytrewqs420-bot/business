@@ -237,7 +237,7 @@
                 <div class="settings-card">
                     <div class="control-row"><label>Pages</label><input type="number" id="inpPages" value="10" min="1" oninput="updateCalc()"></div>
                     <div class="control-row">
-                        <label>Slides</label>
+                        <label>Slides Per Page</label>
                         <select id="inpSlides" onchange="updateCalc()">
                             <option value="1">1</option><option value="2">2</option>
                             <option value="4" selected>4</option><option value="6">6</option><option value="8">8</option>
@@ -246,7 +246,7 @@
                     <div class="control-row">
                         <label>Type</label>
                         <select id="inpType" onchange="updateCalc()">
-                            <option value="bw">B&W</option><option value="color">Color</option>
+                            <option value="bw" selected>B&W</option><option value="color">Color</option>
                         </select>
                     </div>
                     <div class="control-row">
@@ -279,7 +279,7 @@
     <!-- Sticky Footer -->
     <footer class="footer hidden" id="stickyFooter">
         <div class="price-display">
-            <span id="txtSheets">0 Sheets</span>
+            <span id="txtSheets">0 Pages</span>
             <span class="total">৳ <span id="txtTotal">0</span></span>
         </div>
         <textarea id="txtDraft" class="order-preview" onclick="this.select()"></textarea>
@@ -369,14 +369,15 @@
 
         // Update UI
         document.getElementById('txtTotal').innerText = cost;
-        document.getElementById('txtSheets').innerText = physical + (physical===1?' Sheet':' Sheets');
+        const displayPages = physical * 2;
+        document.getElementById('txtSheets').innerText = displayPages + (displayPages===1?' Page':' Pages');
 
         // Update Draft
         const fileLink = document.getElementById('inpFile').value || "Will send on WhatsApp";
         const loc = document.getElementById('inpLocation').value || "Not set";
         const mob = document.getElementById('inpMobile').value || "Not set";
         
-        const draft = `eije order -\n------------------\n📍 Loc: ${loc}\n📱 Mob: ${mob}\n------------------\n🔗 File: ${fileLink}\n🔢 Pages: ${pages}\n🖼 Slides: ${slides}\n🎨 Type: ${type.toUpperCase()}\n📄 Sides: ${sides.toUpperCase()}\n------------------\n📃 Sheets: ${physical}\n💰 TOTAL: ${cost} Tk`;
+        const draft = `eije order -\n------------------\n📍 Loc: ${loc}\n📱 Mob: ${mob}\n------------------\n🔗 File: ${fileLink}\n🔢 Pages: ${pages}\n🖼 Slides Per Page: ${slides}\n🎨 Type: ${type.toUpperCase()}\n📄 Sides: ${sides.toUpperCase()}\n------------------\n📃 Pages: ${displayPages}\n💰 TOTAL: ${cost} Tk`;
         document.getElementById('txtDraft').value = draft;
         
         return draft;
