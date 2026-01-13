@@ -343,7 +343,10 @@
     }
 
     // --- 2. Calculator Logic ---
-    const prices = { bw: { single: 1.8, double: 2.2 }, color: { single: 2.5, double: 3.0 } };
+    const prices = { 
+        bw: { single: 1.8, double: 1.1 }, 
+        color: { single: 2.5, double: 1.5 } 
+    };
 
     function updateCalc() {
         const pages = parseInt(document.getElementById('inpPages').value) || 0;
@@ -364,12 +367,14 @@
 
         // Math
         let logical = Math.ceil(pages / slides);
-        let physical = (sides === 'single') ? logical : Math.ceil(logical / 2);
-        let cost = (physical * prices[type][sides]).toFixed(2);
+        let cost = (logical * prices[type][sides]).toFixed(2);
 
         // Update UI
         document.getElementById('txtTotal').innerText = cost;
-        const displayPages = physical * 2;
+        
+        // Logic: Just count the logical page no (e.g. 100 slides / 4 = 25 pages)
+        let displayPages = logical;
+
         document.getElementById('txtSheets').innerText = displayPages + (displayPages===1?' Page':' Pages');
 
         // Update Draft
